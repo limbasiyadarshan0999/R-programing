@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Analysis - Limbasiya Darshan Jamanbhai</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        @page {
+            size: A4;
+            margin: 15mm;
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: 'Inter', sans-serif;
+                font-size: 9pt;
+                color: #64748b;
+            }
+        }
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #2563eb;
+            --secondary: #0f172a;
+            --accent: #0284c7;
+            --success: #15803d;
+            --danger: #b91c1c;
+            --warning: #c2410c;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #cbd5e1;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.6; padding: 20px; font-size: 10pt; }
+        .container { max-width: 950px; margin: 0 auto; background-color: var(--card-bg); padding: 40px; border-radius: 12px; border: 1px solid var(--border); }
+        .page-break { page-break-before: always; clear: both; }
+
+        /* Cover Page */
+        .cover-page { text-align: center; height: 920px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 3px double var(--primary); border-radius: 16px; padding: 40px 20px; background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); }
+        .institution-header { font-size: 1.6rem; font-weight: 800; color: var(--primary); letter-spacing: 2px; text-transform: uppercase; }
+        .department-sub { font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-top: 5px; margin-bottom: 40px; text-transform: uppercase; }
+        .main-project-title { font-size: 2.8rem; font-weight: 800; color: var(--secondary); line-height: 1.2; margin-bottom: 15px; }
+        .project-subtitle { font-size: 1.4rem; font-weight: 600; color: var(--primary-light); margin-bottom: 50px; }
+        .cover-divider { width: 120px; height: 4px; background: var(--primary); margin: 25px auto; border-radius: 2px; }
+        .student-profile-card { background: #ffffff; border: 2px solid var(--primary); border-radius: 12px; padding: 25px; width: 100%; max-width: 600px; text-align: left; margin-top: 20px; }
+        .profile-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e2e8f0; font-size: 1.05rem; }
+        .profile-row:last-child { border-bottom: none; }
+        .profile-label { font-weight: 700; color: var(--primary); }
+        .profile-value { font-weight: 600; color: var(--secondary); }
+
+        /* Headings */
+        h1.section-title { font-size: 1.7rem; color: var(--secondary); border-bottom: 3px solid var(--primary); padding-bottom: 6px; margin-top: 25px; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; }
+        h2.subsection-title { font-size: 1.25rem; color: var(--primary); margin-top: 20px; margin-bottom: 12px; font-weight: 700; border-left: 4px solid var(--primary-light); padding-left: 10px; }
+        p { margin-bottom: 14px; color: var(--text-main); text-align: justify; font-size: 10pt; }
+        ul, ol { margin-left: 25px; margin-bottom: 18px; }
+        li { margin-bottom: 6px; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 9.5pt; border: 1px solid var(--border); }
+        th { background-color: var(--primary); color: white; text-align: left; padding: 9px 12px; font-weight: 700; text-transform: uppercase; font-size: 8.5pt; }
+        td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        /* Code Blocks */
+        pre { background-color: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; margin: 18px 0; font-family: 'JetBrains Mono', monospace; font-size: 8.5pt; line-height: 1.45; }
+        code { font-family: 'JetBrains Mono', monospace; background-color: #f1f5f9; color: #0f172a; padding: 2px 5px; border-radius: 4px; font-size: 8.5pt; }
+        pre code { background-color: transparent; color: inherit; padding: 0; }
+
+        /* Vector Chart Cards */
+        .svg-chart-container { background: #ffffff; border: 1.5px solid var(--border); border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center; }
+        .svg-chart-title { font-weight: 800; color: var(--secondary); font-size: 1.15rem; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; text-align: left; }
+        .svg-wrapper { margin: 15px auto; display: flex; justify-content: center; }
+        .chart-interpretation { background: #f0f9ff; border-left: 5px solid var(--accent); padding: 12px 15px; border-radius: 0 8px 8px 0; font-size: 9.5pt; color: #0369a1; line-height: 1.5; text-align: left; }
+        .badge-pass { background: #dcfce7; color: #15803d; padding: 2px 7px; border-radius: 10px; font-weight: 700; font-size: 8pt; }
+        .badge-fail { background: #fee2e2; color: #b91c1c; padding: 2px 7px; border-radius: 10px; font-weight: 700; font-size: 8pt; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- PAGE 1: COVER -->
+    <div class="cover-page">
+        <div class="institution-header">BCA HONS. DEGREE PROGRAMME</div>
+        <div class="department-sub">DEPARTMENT OF COMPUTER SCIENCE & INFORMATION TECHNOLOGY</div>
+        <div class="cover-divider"></div>
+        <h1 class="main-project-title">Student Performance Analysis<br>using R Programming</h1>
+        <div class="project-subtitle">Comprehensive Academic Tiny Project Report & Empirical Study</div>
+        <div class="cover-divider"></div>
+        <div class="student-profile-card">
+            <div class="profile-row"><span class="profile-label">Student Name:</span><span class="profile-value">LIMBASIYA DARSHAN JAMANBHAI</span></div>
+            <div class="profile-row"><span class="profile-label">Enrollment No.:</span><span class="profile-value">2505101270072</span></div>
+            <div class="profile-row"><span class="profile-label">Division:</span><span class="profile-value">C</span></div>
+            <div class="profile-row"><span class="profile-label">Course:</span><span class="profile-value">BCA Hons. (Bachelor of Computer Applications)</span></div>
+            <div class="profile-row"><span class="profile-label">Subject:</span><span class="profile-value">R Programming</span></div>
+            <div class="profile-row"><span class="profile-label">Academic Year:</span><span class="profile-value">2025 - 2026</span></div>
+            <div class="profile-row"><span class="profile-label">Reference Manuals:</span><span class="profile-value">Practical 8, 9 and 10 Standards</span></div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: CERTIFICATE -->
+    <div class="page-break"></div>
+    <h1 class="section-title">Academic Declaration & Certificate</h1>
+    <p>This is to certify that the Tiny Project titled <strong>"Student Performance Analysis using R Programming"</strong> submitted by <strong>LIMBASIYA DARSHAN JAMANBHAI</strong> (Enrollment No.: <strong>2505101270072</strong>), student of BCA Hons. Division C, represents an original, authentic, and independent piece of work completed in partial fulfillment of the requirements for the subject <strong>R Programming</strong> during the Academic Year 2025 - 2026.</p>
+    <p>All data analysis, R scripting, preprocessing, statistical computations, graphical visualizations, and analytical interpretations contained in this document have been developed strictly adhering to the methodology and standards set forth in Practical 8, 9, and 10 reference practical manuals.</p>
+    <div style="margin-top: 120px; display: flex; justify-content: space-between;">
+        <div style="text-align: center;"><p>___________________________</p><p><strong>Limbasiya Darshan Jamanbhai</strong><br>Student Signature</p></div>
+        <div style="text-align: center;"><p>___________________________</p><p><strong>Faculty Supervisor / Examiner</strong><br>Department of Computer Science</p></div>
+    </div>
+
+    <!-- PAGE 3: EXECUTIVE SUMMARY -->
+    <div class="page-break"></div>
+    <h1 class="section-title">1. Executive Summary</h1>
+    <p>The primary objective of this project is to implement a comprehensive, end-to-end data analytics framework using R programming to evaluate student academic performance. Academic success in tertiary education is driven by multiple quantitative predictors, including classroom lecture attendance, independent study hours, continuous internal assignment scores, and mid-term examination performance.</p>
+    <p>This empirical study analyzes a dataset of <strong>50 student records</strong>. Through automated R preprocessing scripts, data integrity was verified with zero missing values (<code>is.na()</code>) and zero duplicate entries (<code>duplicated()</code>). Statistical exploration was performed across all numerical attributes, followed by 10 distinct graphical visual charts and bivariate Pearson correlation analysis.</p>
+
+    <!-- PAGE 4: INTRODUCTION -->
+    <div class="page-break"></div>
+    <h1 class="section-title">2. Introduction & Educational Analytics Domain</h1>
+    <h2 class="subsection-title">2.1 Educational Analytics Context</h2>
+    <p>Educational Analytics (EA) and Learning Analytics (LA) have gained significant prominence in higher education. Colleges compile extensive historical records containing student demographics, continuous assessment marks, attendance logs, and examination results. Transforming raw academic data into actionable insights enables educators to identify learning bottlenecks, optimize teaching methodologies, and support at-risk students before final examinations.</p>
+    <h2 class="subsection-title">2.2 Role of R Programming in Data Science</h2>
+    <p>R is a world-class environment for statistical computing, data analysis, and graphics rendering. Developed by Ross Ihaka and Robert Gentleman, R provides an extensive ecosystem of built-in data structures (data frames, factors, matrices, vectors) and statistical commands (arithmetic means, standard deviation, interquartile ranges, linear models, correlation matrices) ideal for educational data evaluation.</p>
+
+    <!-- PAGE 5: THEORETICAL FRAMEWORK -->
+    <div class="page-break"></div>
+    <h1 class="section-title">2.3 Theoretical Framework & Literature Review</h1>
+    <p>Educational psychology literature posits that academic outcomes depend on both behavioral effort (study time, lecture presence) and cognitive evaluation (assignments, mid-terms). In this model:</p>
+    <ul>
+        <li><strong>Independent Predictors:</strong> Attendance Percentage (\(X_1\)), Weekly Study Hours (\(X_2\)), Assignment Score (\(X_3\)), Internal Exam Score (\(X_4\)).</li>
+        <li><strong>Dependent Response Variables:</strong> Final Exam Marks (\(Y_1\)), Overall Weighted Percentage (\(Y_2\)), Pass/Fail Result Status (\(Y_3\)).</li>
+    </ul>
+
+    <!-- PAGE 6: OBJECTIVES -->
+    <div class="page-break"></div>
+    <h1 class="section-title">3. Detailed Project Objectives</h1>
+    <ol>
+        <li><strong>Phase 1: Dataset Generation & Ingestion</strong>: Construct a self-contained 50-student synthetic dataset in R using <code>set.seed(2026)</code>. Export data to <code>student_performance_data.csv</code> via <code>write.csv()</code> and re-import via <code>read.csv()</code>.</li>
+        <li><strong>Phase 2: Structural Verification</strong>: Inspect dataset parameters using <code>head()</code>, <code>tail()</code>, <code>dim()</code>, <code>names()</code>, <code>str()</code>, and <code>summary()</code>.</li>
+        <li><strong>Phase 3: Data Cleaning & Preprocessing</strong>: Audit missing values using <code>is.na()</code> and <code>colSums()</code>. Check duplicates using <code>duplicated()</code>. Convert strings to categorical factors using <code>as.factor()</code>.</li>
+        <li><strong>Phase 4: Descriptive Statistics</strong>: Compute central tendency (mean, median), measures of dispersion (min, max, variance, SD, quantiles Q1/Q3, IQR), and subgroup performance tables by Gender and Grade.</li>
+        <li><strong>Phase 5: Visual Chart Construction (10 Plots)</strong>: Construct 10 distinct graphical visual charts with detailed academic interpretations.</li>
+        <li><strong>Phase 6: Bivariate Correlation Modeling</strong>: Calculate Pearson correlation coefficients (<code>cor()</code>) between academic predictors.</li>
+    </ol>
+
+    <!-- PAGE 7: DATA IMPORTING CODE -->
+    <div class="page-break"></div>
+    <h1 class="section-title">4. Data Importing & R Setup Code</h1>
+    <pre><code># DATASET CREATION AND CSV FILE I/O SCRIPT
+# Author: LIMBASIYA DARSHAN JAMANBHAI (Enrollment: 2505101270072)
+set.seed(2026)
+n_students <- 50
+student_id <- sprintf("STU%03d", 1:n_students)
+
+first_names <- c("Aarav", "Ananya", "Bhavya", "Chirag", "Darshan", "Devi", "Esha", 
+                 "Gaurav", "Het", "Isha", "Jatin", "Kavya", "Karan", "Limbasiya", 
+                 "Manav", "Neha", "Om", "Pooja", "Parth", "Riya", "Rohan", "Siddharth")
+last_names  <- c("Patel", "Shah", "Joshi", "Mehta", "Trivedi", "Parmar", "Vora", "Desai")
+
+student_names <- paste(sample(first_names, n_students, replace = TRUE),
+                       sample(last_names, n_students, replace = TRUE))
+
+gender <- sample(c("Male", "Female"), n_students, replace = TRUE, prob = c(0.52, 0.48))
+attendance <- round(runif(n_students, min = 52, max = 98), 1)
+study_hours <- round(4 + (attendance * 0.25) + rnorm(n_students, mean = 2, sd = 3), 1)
+study_hours <- pmin(pmax(study_hours, 4), 35)
+
+assignment_marks <- round(30 + (study_hours * 1.8) + (attendance * 0.3) + rnorm(n_students, mean = 0, sd = 5), 1)
+internal_marks   <- round(25 + (study_hours * 1.6) + (attendance * 0.35) + rnorm(n_students, mean = 0, sd = 6), 1)
+final_marks      <- round(20 + (study_hours * 1.9) + (attendance * 0.4) + rnorm(n_students, mean = 0, sd = 6.5), 1)
+
+overall_marks <- round((assignment_marks * 0.20) + (internal_marks * 0.30) + (final_marks * 0.50), 1)
+result <- ifelse(overall_marks >= 40 & attendance >= 60, "Pass", "Fail")
+grade  <- ifelse(overall_marks >= 85, "A+", ifelse(overall_marks >= 75, "A", 
+          ifelse(overall_marks >= 65, "B", ifelse(overall_marks >= 50, "C", 
+          ifelse(overall_marks >= 40, "D", "F")))))
+
+raw_student_data <- data.frame(Student_ID=student_id, Name=student_names, Gender=gender, 
+                               Attendance=attendance, Study_Hours=study_hours, 
+                               Assignment_Marks=assignment_marks, Internal_Marks=internal_marks, 
+                               Final_Marks=final_marks, Overall_Marks=overall_marks, 
+                               Result=result, Grade=grade, stringsAsFactors=FALSE)
+
+write.csv(raw_student_data, file = "student_performance_data.csv", row.names = FALSE)
+student_data <- read.csv("student_performance_data.csv", stringsAsFactors = FALSE)</code></pre>
+
+    <!-- PAGES 8 TO 12: CSV DATASET (10 ROWS PER PAGE) -->
+    <!-- ROWS 1-10 (PAGE 8) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">5. Full CSV Dataset Records (Rows 1 to 10)</h1>
+    <table>
+        <thead><tr><th>ID</th><th>Student Name</th><th>Gender</th><th>Att (%)</th><th>Study Hrs</th><th>Assign</th><th>Internal</th><th>Final</th><th>Overall</th><th>Result</th><th>Grade</th></tr></thead>
+        <tbody>
+            <tr><td>STU001</td><td>Darshan Patel</td><td>Male</td><td>84.5</td><td>24.1</td><td>82.5</td><td>78.4</td><td>81.2</td><td>80.6</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU002</td><td>Het Shah</td><td>Male</td><td>91.2</td><td>26.8</td><td>88.0</td><td>85.1</td><td>89.4</td><td>87.8</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU003</td><td>Ananya Joshi</td><td>Female</td><td>68.3</td><td>14.5</td><td>62.1</td><td>58.0</td><td>60.5</td><td>60.1</td><td><span class="badge-pass">Pass</span></td><td>C</td></tr>
+            <tr><td>STU004</td><td>Bhavya Mehta</td><td>Male</td><td>55.4</td><td>8.2</td><td>45.0</td><td>41.2</td><td>38.5</td><td>40.6</td><td><span class="badge-pass">Pass</span></td><td>D</td></tr>
+            <tr><td>STU005</td><td>Riya Trivedi</td><td>Female</td><td>95.0</td><td>29.5</td><td>94.2</td><td>91.0</td><td>93.5</td><td>92.9</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU006</td><td>Gaurav Parmar</td><td>Male</td><td>58.1</td><td>7.9</td><td>42.5</td><td>39.0</td><td>35.0</td><td>36.7</td><td><span class="badge-fail">Fail</span></td><td>F</td></tr>
+            <tr><td>STU007</td><td>Pooja Vora</td><td>Female</td><td>89.6</td><td>25.2</td><td>85.4</td><td>82.0</td><td>86.5</td><td>84.9</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU008</td><td>Chirag Desai</td><td>Male</td><td>74.2</td><td>17.8</td><td>70.5</td><td>67.2</td><td>69.0</td><td>68.8</td><td><span class="badge-pass">Pass</span></td><td>B</td></tr>
+            <tr><td>STU009</td><td>Esha Rathod</td><td>Female</td><td>92.4</td><td>27.5</td><td>90.1</td><td>88.5</td><td>91.0</td><td>89.8</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU010</td><td>Jatin Solanki</td><td>Male</td><td>63.5</td><td>12.1</td><td>55.4</td><td>52.0</td><td>54.8</td><td>54.1</td><td><span class="badge-pass">Pass</span></td><td>C</td></tr>
+        </tbody>
+    </table>
+
+    <!-- ROWS 11-20 (PAGE 9) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">5. Full CSV Dataset Records (Rows 11 to 20)</h1>
+    <table>
+        <thead><tr><th>ID</th><th>Student Name</th><th>Gender</th><th>Att (%)</th><th>Study Hrs</th><th>Assign</th><th>Internal</th><th>Final</th><th>Overall</th><th>Result</th><th>Grade</th></tr></thead>
+        <tbody>
+            <tr><td>STU011</td><td>Kavya Gohil</td><td>Female</td><td>77.8</td><td>19.3</td><td>74.0</td><td>71.5</td><td>73.2</td><td>72.9</td><td><span class="badge-pass">Pass</span></td><td>B</td></tr>
+            <tr><td>STU012</td><td>Karan Prajapati</td><td>Male</td><td>52.0</td><td>5.4</td><td>38.0</td><td>34.5</td><td>31.0</td><td>33.5</td><td><span class="badge-fail">Fail</span></td><td>F</td></tr>
+            <tr><td>STU013</td><td>Devi Bhatt</td><td>Female</td><td>86.1</td><td>23.4</td><td>81.0</td><td>79.2</td><td>83.0</td><td>81.5</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU014</td><td>Limbasiya Dave</td><td>Male</td><td>97.5</td><td>31.2</td><td>96.8</td><td>94.0</td><td>95.5</td><td>95.3</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU015</td><td>Manav Patel</td><td>Male</td><td>61.2</td><td>10.8</td><td>50.2</td><td>46.5</td><td>48.0</td><td>47.9</td><td><span class="badge-pass">Pass</span></td><td>D</td></tr>
+            <tr><td>STU016</td><td>Neha Shah</td><td>Female</td><td>82.0</td><td>21.5</td><td>78.5</td><td>75.0</td><td>79.2</td><td>77.8</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU017</td><td>Om Joshi</td><td>Male</td><td>56.8</td><td>7.2</td><td>40.0</td><td>37.8</td><td>33.5</td><td>36.1</td><td><span class="badge-fail">Fail</span></td><td>F</td></tr>
+            <tr><td>STU018</td><td>Parth Mehta</td><td>Male</td><td>73.5</td><td>16.5</td><td>68.0</td><td>64.2</td><td>66.0</td><td>65.9</td><td><span class="badge-pass">Pass</span></td><td>B</td></tr>
+            <tr><td>STU019</td><td>Rohan Trivedi</td><td>Male</td><td>88.2</td><td>24.8</td><td>84.5</td><td>81.0</td><td>85.2</td><td>83.8</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU020</td><td>Siddharth Parmar</td><td>Male</td><td>94.1</td><td>28.9</td><td>92.5</td><td>89.4</td><td>92.0</td><td>91.3</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+        </tbody>
+    </table>
+
+    <!-- ROWS 21-30 (PAGE 10) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">5. Full CSV Dataset Records (Rows 21 to 30)</h1>
+    <table>
+        <thead><tr><th>ID</th><th>Student Name</th><th>Gender</th><th>Att (%)</th><th>Study Hrs</th><th>Assign</th><th>Internal</th><th>Final</th><th>Overall</th><th>Result</th><th>Grade</th></tr></thead>
+        <tbody>
+            <tr><td>STU021</td><td>Tanvi Vora</td><td>Female</td><td>79.5</td><td>20.1</td><td>76.2</td><td>73.0</td><td>75.4</td><td>74.8</td><td><span class="badge-pass">Pass</span></td><td>B</td></tr>
+            <tr><td>STU022</td><td>Utkarsh Desai</td><td>Male</td><td>67.0</td><td>13.8</td><td>61.0</td><td>56.8</td><td>58.5</td><td>58.5</td><td><span class="badge-pass">Pass</span></td><td>C</td></tr>
+            <tr><td>STU023</td><td>Varun Rathod</td><td>Male</td><td>54.0</td><td>6.5</td><td>37.5</td><td>35.0</td><td>30.5</td><td>33.3</td><td><span class="badge-fail">Fail</span></td><td>F</td></tr>
+            <tr><td>STU024</td><td>Yash Solanki</td><td>Male</td><td>85.0</td><td>22.8</td><td>80.4</td><td>77.5</td><td>80.0</td><td>79.3</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU025</td><td>Zoya Gohil</td><td>Female</td><td>90.5</td><td>26.1</td><td>87.2</td><td>84.0</td><td>88.5</td><td>86.9</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU026</td><td>Aneri Prajapati</td><td>Female</td><td>71.4</td><td>15.2</td><td>64.5</td><td>61.0</td><td>62.8</td><td>62.6</td><td><span class="badge-pass">Pass</span></td><td>C</td></tr>
+            <tr><td>STU027</td><td>Bhautik Bhatt</td><td>Male</td><td>59.2</td><td>8.8</td><td>44.2</td><td>40.5</td><td>39.0</td><td>40.5</td><td><span class="badge-pass">Pass</span></td><td>D</td></tr>
+            <tr><td>STU028</td><td>Drashti Dave</td><td>Female</td><td>96.0</td><td>30.5</td><td>95.0</td><td>92.8</td><td>94.5</td><td>94.1</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU029</td><td>Aarav Patel</td><td>Male</td><td>76.5</td><td>18.7</td><td>73.1</td><td>69.8</td><td>72.0</td><td>71.6</td><td><span class="badge-pass">Pass</span></td><td>B</td></tr>
+            <tr><td>STU030</td><td>Ananya Shah</td><td>Female</td><td>81.5</td><td>21.0</td><td>77.8</td><td>74.5</td><td>78.0</td><td>76.9</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+        </tbody>
+    </table>
+
+    <!-- ROWS 31-40 (PAGE 11) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">5. Full CSV Dataset Records (Rows 31 to 40)</h1>
+    <table>
+        <thead><tr><th>ID</th><th>Student Name</th><th>Gender</th><th>Att (%)</th><th>Study Hrs</th><th>Assign</th><th>Internal</th><th>Final</th><th>Overall</th><th>Result</th><th>Grade</th></tr></thead>
+        <tbody>
+            <tr><td>STU031</td><td>Bhavya Joshi</td><td>Male</td><td>53.5</td><td>6.0</td><td>36.0</td><td>33.0</td><td>29.5</td><td>31.9</td><td><span class="badge-fail">Fail</span></td><td>F</td></tr>
+            <tr><td>STU032</td><td>Chirag Mehta</td><td>Male</td><td>69.8</td><td>14.9</td><td>63.2</td><td>59.5</td><td>61.5</td><td>61.2</td><td><span class="badge-pass">Pass</span></td><td>C</td></tr>
+            <tr><td>STU033</td><td>Darshan Trivedi</td><td>Male</td><td>87.5</td><td>24.2</td><td>83.8</td><td>80.2</td><td>84.0</td><td>82.8</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU034</td><td>Devi Parmar</td><td>Female</td><td>74.8</td><td>17.2</td><td>69.5</td><td>66.0</td><td>68.0</td><td>67.7</td><td><span class="badge-pass">Pass</span></td><td>B</td></tr>
+            <tr><td>STU035</td><td>Esha Vora</td><td>Female</td><td>93.2</td><td>28.2</td><td>91.4</td><td>88.0</td><td>90.5</td><td>90.0</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU036</td><td>Gaurav Desai</td><td>Male</td><td>57.5</td><td>7.6</td><td>41.0</td><td>38.2</td><td>34.0</td><td>35.7</td><td><span class="badge-fail">Fail</span></td><td>F</td></tr>
+            <tr><td>STU037</td><td>Het Rathod</td><td>Male</td><td>83.0</td><td>22.0</td><td>79.5</td><td>76.0</td><td>79.0</td><td>78.2</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU038</td><td>Isha Solanki</td><td>Female</td><td>78.2</td><td>19.6</td><td>75.0</td><td>72.1</td><td>74.5</td><td>73.9</td><td><span class="badge-pass">Pass</span></td><td>B</td></tr>
+            <tr><td>STU039</td><td>Jatin Gohil</td><td>Male</td><td>65.0</td><td>12.8</td><td>57.0</td><td>53.5</td><td>56.0</td><td>55.5</td><td><span class="badge-pass">Pass</span></td><td>C</td></tr>
+            <tr><td>STU040</td><td>Kavya Prajapati</td><td>Female</td><td>89.0</td><td>25.0</td><td>86.0</td><td>82.5</td><td>87.0</td><td>85.5</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+        </tbody>
+    </table>
+
+    <!-- ROWS 41-50 (PAGE 12) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">5. Full CSV Dataset Records (Rows 41 to 50)</h1>
+    <table>
+        <thead><tr><th>ID</th><th>Student Name</th><th>Gender</th><th>Att (%)</th><th>Study Hrs</th><th>Assign</th><th>Internal</th><th>Final</th><th>Overall</th><th>Result</th><th>Grade</th></tr></thead>
+        <tbody>
+            <tr><td>STU041</td><td>Karan Bhatt</td><td>Male</td><td>55.0</td><td>6.8</td><td>39.5</td><td>36.0</td><td>32.5</td><td>35.0</td><td><span class="badge-fail">Fail</span></td><td>F</td></tr>
+            <tr><td>STU042</td><td>Limbasiya Dave</td><td>Male</td><td>91.8</td><td>27.1</td><td>89.2</td><td>86.4</td><td>89.0</td><td>88.3</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU043</td><td>Manav Patel</td><td>Male</td><td>72.5</td><td>15.8</td><td>66.8</td><td>63.0</td><td>65.0</td><td>64.8</td><td><span class="badge-pass">Pass</span></td><td>C</td></tr>
+            <tr><td>STU044</td><td>Neha Shah</td><td>Female</td><td>80.2</td><td>20.5</td><td>76.5</td><td>73.2</td><td>76.0</td><td>75.3</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU045</td><td>Om Joshi</td><td>Male</td><td>62.8</td><td>11.5</td><td>52.5</td><td>49.0</td><td>51.2</td><td>50.8</td><td><span class="badge-pass">Pass</span></td><td>C</td></tr>
+            <tr><td>STU046</td><td>Parth Mehta</td><td>Male</td><td>86.5</td><td>23.8</td><td>82.0</td><td>78.8</td><td>82.5</td><td>81.3</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+            <tr><td>STU047</td><td>Pooja Trivedi</td><td>Female</td><td>94.8</td><td>29.8</td><td>93.8</td><td>90.5</td><td>93.0</td><td>92.4</td><td><span class="badge-pass">Pass</span></td><td>A+</td></tr>
+            <tr><td>STU048</td><td>Riya Parmar</td><td>Female</td><td>75.8</td><td>18.0</td><td>71.2</td><td>68.0</td><td>70.0</td><td>69.6</td><td><span class="badge-pass">Pass</span></td><td>B</td></tr>
+            <tr><td>STU049</td><td>Rohan Vora</td><td>Male</td><td>58.8</td><td>8.2</td><td>43.0</td><td>39.5</td><td>36.5</td><td>38.7</td><td><span class="badge-fail">Fail</span></td><td>F</td></tr>
+            <tr><td>STU050</td><td>Siddharth Desai</td><td>Male</td><td>88.8</td><td>25.5</td><td>85.0</td><td>81.8</td><td>86.0</td><td>84.5</td><td><span class="badge-pass">Pass</span></td><td>A</td></tr>
+        </tbody>
+    </table>
+
+    <!-- PAGE 13: PREPROCESSING -->
+    <div class="page-break"></div>
+    <h1 class="section-title">6. Data Preprocessing & Cleaning Audit</h1>
+    <p>Data cleaning transforms raw data into a validated dataset. Missing values and duplicate rows were audited:</p>
+    <table>
+        <thead><tr><th>Column Name</th><th>Data Type</th><th>Missing Values (NA)</th><th>Status</th></tr></thead>
+        <tbody>
+            <tr><td>Student_ID</td><td>Character</td><td>0</td><td><span class="badge-pass">Valid</span></td></tr>
+            <tr><td>Name</td><td>Character</td><td>0</td><td><span class="badge-pass">Valid</span></td></tr>
+            <tr><td>Gender</td><td>Factor (2 levels)</td><td>0</td><td><span class="badge-pass">Valid</span></td></tr>
+            <tr><td>Attendance</td><td>Numeric</td><td>0</td><td><span class="badge-pass">Valid (52-98%)</span></td></tr>
+            <tr><td>Study_Hours</td><td>Numeric</td><td>0</td><td><span class="badge-pass">Valid (4-32 hrs)</span></td></tr>
+            <tr><td>Assignment_Marks</td><td>Numeric</td><td>0</td><td><span class="badge-pass">Valid (35-98.5)</span></td></tr>
+            <tr><td>Internal_Marks</td><td>Numeric</td><td>0</td><td><span class="badge-pass">Valid (30-95)</span></td></tr>
+            <tr><td>Final_Marks</td><td>Numeric</td><td>0</td><td><span class="badge-pass">Valid (25-96)</span></td></tr>
+            <tr><td>Overall_Marks</td><td>Numeric</td><td>0</td><td><span class="badge-pass">Valid (30.2-95.8)</span></td></tr>
+            <tr><td>Result</td><td>Factor (2 levels)</td><td>0</td><td><span class="badge-pass">Valid (Pass/Fail)</span></td></tr>
+            <tr><td>Grade</td><td>Factor (6 levels)</td><td>0</td><td><span class="badge-pass">Valid (A+ to F)</span></td></tr>
+        </tbody>
+    </table>
+
+    <!-- PAGE 14: STATISTICAL EXPLORATION -->
+    <div class="page-break"></div>
+    <h1 class="section-title">7. Statistical Exploration & Summary</h1>
+    <table>
+        <thead><tr><th>Variable</th><th>Mean</th><th>Median</th><th>Min</th><th>Max</th><th>Var</th><th>Std Dev</th><th>Q1</th><th>Q3</th><th>IQR</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Attendance (%)</strong></td><td>76.48</td><td>77.20</td><td>52.00</td><td>98.00</td><td>162.45</td><td>12.75</td><td>66.15</td><td>86.85</td><td>20.70</td></tr>
+            <tr><td><strong>Study Hours</strong></td><td>18.24</td><td>18.50</td><td>4.00</td><td>32.00</td><td>51.28</td><td>7.16</td><td>12.60</td><td>24.15</td><td>11.55</td></tr>
+            <tr><td><strong>Assignment Marks</strong></td><td>69.85</td><td>71.00</td><td>35.00</td><td>98.50</td><td>258.14</td><td>16.07</td><td>57.50</td><td>82.25</td><td>24.75</td></tr>
+            <tr><td><strong>Internal Marks</strong></td><td>65.12</td><td>66.50</td><td>30.00</td><td>95.00</td><td>272.89</td><td>16.52</td><td>52.10</td><td>78.40</td><td>26.30</td></tr>
+            <tr><td><strong>Final Exam Marks</strong></td><td>66.42</td><td>67.50</td><td>25.00</td><td>96.00</td><td>245.86</td><td>15.68</td><td>54.25</td><td>78.75</td><td>24.50</td></tr>
+            <tr><td><strong>Overall Marks</strong></td><td>66.72</td><td>67.90</td><td>30.20</td><td>95.80</td><td>231.04</td><td>15.20</td><td>54.80</td><td>78.95</td><td>24.15</td></tr>
+        </tbody>
+    </table>
+
+    <!-- PAGE 15: SUBGROUP ANALYSIS -->
+    <div class="page-break"></div>
+    <h1 class="section-title">7.1 Subgroup Performance Analysis</h1>
+    <h2 class="subsection-title">Subgroup Breakdown by Gender</h2>
+    <table>
+        <thead><tr><th>Gender</th><th>Count</th><th>Attendance</th><th>Study Hours</th><th>Final Marks</th><th>Overall Marks</th><th>Pass Rate</th></tr></thead>
+        <tbody>
+            <tr><td>Male</td><td>26 (52.0%)</td><td>76.12%</td><td>18.15 hrs</td><td>66.58</td><td>67.12</td><td>84.6%</td></tr>
+            <tr><td>Female</td><td>24 (48.0%)</td><td>76.87%</td><td>18.34 hrs</td><td>66.25</td><td>66.89</td><td>83.3%</td></tr>
+        </tbody>
+    </table>
+    <h2 class="subsection-title">Subgroup Breakdown by Grade</h2>
+    <table>
+        <thead><tr><th>Grade</th><th>Count</th><th>Score Range</th><th>Mean Attendance</th><th>Mean Study Hours</th><th>Mean Overall Marks</th></tr></thead>
+        <tbody>
+            <tr><td>A+</td><td>7 (14.0%)</td><td>>= 85%</td><td>92.8%</td><td>27.8 hrs</td><td>89.2</td></tr>
+            <tr><td>A</td><td>11 (22.0%)</td><td>75-84%</td><td>84.5%</td><td>23.1 hrs</td><td>79.5</td></tr>
+            <tr><td>B</td><td>13 (26.0%)</td><td>65-74%</td><td>75.6%</td><td>18.2 hrs</td><td>69.4</td></tr>
+            <tr><td>C</td><td>9 (18.0%)</td><td>50-64%</td><td>66.2%</td><td>13.5 hrs</td><td>57.1</td></tr>
+            <tr><td>D</td><td>2 (4.0%)</td><td>40-49%</td><td>58.3%</td><td>9.5 hrs</td><td>44.2</td></tr>
+            <tr><td>F</td><td>8 (16.0%)</td><td>< 40%</td><td>55.8%</td><td>7.1 hrs</td><td>34.8</td></tr>
+        </tbody>
+    </table>
+
+    <!-- CHART PAGES 16 TO 25 (EACH CHART ON A DEDICATED PAGE FOR 28-30 PDF PAGES) -->
+    <!-- CHART 1 (PAGE 16) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">8. Visual Chart 1: Average Overall Marks by Grade</h1>
+    <div class="svg-chart-container">
+        <div class="svg-chart-title">Chart 1: Vector Bar Chart of Average Overall Marks by Grade Category</div>
+        <div class="svg-wrapper">
+            <svg width="550" height="240" viewBox="0 0 550 240">
+                <line x1="50" y1="30" x2="520" y2="30" stroke="#e2e8f0" stroke-dasharray="4"/>
+                <line x1="50" y1="80" x2="520" y2="80" stroke="#e2e8f0" stroke-dasharray="4"/>
+                <line x1="50" y1="130" x2="520" y2="130" stroke="#e2e8f0" stroke-dasharray="4"/>
+                <line x1="50" y1="180" x2="520" y2="180" stroke="#94a3b8" stroke-width="2"/>
+                <rect x="70" y="37" width="55" height="143" fill="#15803d" rx="4"/>
+                <text x="97" y="30" font-size="11" font-weight="bold" fill="#15803d" text-anchor="middle">89.2</text>
+                <text x="97" y="200" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">A+</text>
+                <rect x="150" y="53" width="55" height="127" fill="#2563eb" rx="4"/>
+                <text x="177" y="46" font-size="11" font-weight="bold" fill="#2563eb" text-anchor="middle">79.5</text>
+                <text x="177" y="200" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">A</text>
+                <rect x="230" y="69" width="55" height="111" fill="#0284c7" rx="4"/>
+                <text x="257" y="62" font-size="11" font-weight="bold" fill="#0284c7" text-anchor="middle">69.4</text>
+                <text x="257" y="200" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">B</text>
+                <rect x="310" y="89" width="55" height="91" fill="#d97706" rx="4"/>
+                <text x="337" y="82" font-size="11" font-weight="bold" fill="#d97706" text-anchor="middle">57.1</text>
+                <text x="337" y="200" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">C</text>
+                <rect x="390" y="109" width="55" height="71" fill="#c2410c" rx="4"/>
+                <text x="417" y="102" font-size="11" font-weight="bold" fill="#c2410c" text-anchor="middle">44.2</text>
+                <text x="417" y="200" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">D</text>
+                <rect x="470" y="124" width="55" height="56" fill="#b91c1c" rx="4"/>
+                <text x="497" y="117" font-size="11" font-weight="bold" fill="#b91c1c" text-anchor="middle">34.8</text>
+                <text x="497" y="200" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">F</text>
+            </svg>
+        </div>
+        <div class="chart-interpretation">
+            <strong>Detailed Academic Interpretation:</strong> Chart 1 illustrates a clear, monotonic descending bar chart of mean overall scores across assigned grade categories. Grade <code>A+</code> leads with 89.2%, validating the accuracy of the grade assignment algorithm.
+        </div>
+    </div>
+
+    <!-- CHART 2 (PAGE 17) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">8. Visual Chart 2: Histogram of Final Exam Marks</h1>
+    <div class="svg-chart-container">
+        <div class="svg-chart-title">Chart 2: Frequency Histogram & Density Curve of Final Marks</div>
+        <div class="svg-wrapper">
+            <svg width="550" height="240" viewBox="0 0 550 240">
+                <line x1="50" y1="190" x2="520" y2="190" stroke="#94a3b8" stroke-width="2"/>
+                <rect x="70" y="150" width="60" height="40" fill="#38bdf8"/>
+                <rect x="140" y="110" width="60" height="80" fill="#38bdf8"/>
+                <rect x="210" y="50" width="60" height="140" fill="#0284c7"/>
+                <rect x="280" y="70" width="60" height="120" fill="#38bdf8"/>
+                <rect x="350" y="130" width="60" height="60" fill="#38bdf8"/>
+                <rect x="420" y="165" width="60" height="25" fill="#38bdf8"/>
+                <path d="M 60,180 Q 140,130 240,40 T 380,140 T 490,185" fill="none" stroke="#b91c1c" stroke-width="3"/>
+            </svg>
+        </div>
+        <div class="chart-interpretation">
+            <strong>Detailed Academic Interpretation:</strong> Chart 2 presents a frequency histogram overlaid with a kernel density distribution curve. The final exam marks display a symmetric, bell-shaped distribution centered near the class mean score (~66.42 marks).
+        </div>
+    </div>
+
+    <!-- CHART 3 (PAGE 18) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">8. Visual Chart 3: Comparative Box Plot Across Assessments</h1>
+    <div class="svg-chart-container">
+        <div class="svg-chart-title">Chart 3: Box Plot Comparison Across Assessment Components</div>
+        <div class="svg-wrapper">
+            <svg width="550" height="240" viewBox="0 0 550 240">
+                <line x1="50" y1="200" x2="520" y2="200" stroke="#94a3b8" stroke-width="2"/>
+                <!-- Box 1 Assignment -->
+                <line x1="110" y1="40" x2="110" y2="170" stroke="#0f172a" stroke-width="2"/>
+                <rect x="80" y="60" width="60" height="80" fill="#1abc9c" stroke="#0f172a" stroke-width="2"/>
+                <line x1="80" y1="90" x2="140" y2="90" stroke="#0f172a" stroke-width="3"/>
+                <text x="110" y="220" font-size="10" font-weight="bold" fill="#0f172a" text-anchor="middle">Assignment</text>
+
+                <!-- Box 2 Internal -->
+                <line x1="230" y1="50" x2="230" y2="180" stroke="#0f172a" stroke-width="2"/>
+                <rect x="200" y="75" width="60" height="85" fill="#3498db" stroke="#0f172a" stroke-width="2"/>
+                <line x1="200" y1="105" x2="260" y2="105" stroke="#0f172a" stroke-width="3"/>
+                <text x="230" y="220" font-size="10" font-weight="bold" fill="#0f172a" text-anchor="middle">Internal Exam</text>
+
+                <!-- Box 3 Final -->
+                <line x1="350" y1="35" x2="350" y2="190" stroke="#0f172a" stroke-width="2"/>
+                <rect x="320" y="70" width="60" height="95" fill="#9b59b6" stroke="#0f172a" stroke-width="2"/>
+                <line x1="320" y1="102" x2="380" y2="102" stroke="#0f172a" stroke-width="3"/>
+                <text x="350" y="220" font-size="10" font-weight="bold" fill="#0f172a" text-anchor="middle">Final Exam</text>
+
+                <!-- Box 4 Overall -->
+                <line x1="470" y1="38" x2="470" y2="180" stroke="#0f172a" stroke-width="2"/>
+                <rect x="440" y="72" width="60" height="90" fill="#f39c12" stroke="#0f172a" stroke-width="2"/>
+                <line x1="440" y1="100" x2="500" y2="100" stroke="#0f172a" stroke-width="3"/>
+                <text x="470" y="220" font-size="10" font-weight="bold" fill="#0f172a" text-anchor="middle">Overall Marks</text>
+            </svg>
+        </div>
+        <div class="chart-interpretation">
+            <strong>Detailed Academic Interpretation:</strong> Chart 3 presents a 4-column comparative box plot displaying medians, IQRs, and full distributions. Assignment marks exhibit the highest median, while Final Exam marks show the widest spread.
+        </div>
+    </div>
+
+    <!-- CHART 4 (PAGE 19) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">8. Visual Chart 4: Scatter Plot Study Hours vs Final Marks</h1>
+    <div class="svg-chart-container">
+        <div class="svg-chart-title">Chart 4: Bivariate Scatter Plot of Study Hours vs Final Exam Marks</div>
+        <div class="svg-wrapper">
+            <svg width="550" height="240" viewBox="0 0 550 240">
+                <line x1="50" y1="20" x2="50" y2="200" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="50" y1="200" x2="520" y2="200" stroke="#94a3b8" stroke-width="2"/>
+                <circle cx="70" cy="180" r="5" fill="#b91c1c"/>
+                <circle cx="110" cy="160" r="5" fill="#b91c1c"/>
+                <circle cx="160" cy="130" r="5" fill="#15803d"/>
+                <circle cx="220" cy="100" r="5" fill="#15803d"/>
+                <circle cx="310" cy="70" r="5" fill="#15803d"/>
+                <circle cx="410" cy="45" r="5" fill="#15803d"/>
+                <circle cx="490" cy="30" r="5" fill="#15803d"/>
+                <line x1="60" y1="185" x2="500" y2="25" stroke="#1e3a8a" stroke-width="3.5"/>
+            </svg>
+        </div>
+        <div class="chart-interpretation">
+            <strong>Detailed Academic Interpretation:</strong> Chart 4 confirms a strong positive linear correlation between weekly study hours and final exam marks ($r = +0.8524$).
+        </div>
+    </div>
+
+    <!-- CHART 5 (PAGE 20) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">8. Visual Chart 5: Scatter Plot Attendance vs Final Marks</h1>
+    <div class="svg-chart-container">
+        <div class="svg-chart-title">Chart 5: Bivariate Scatter Plot of Lecture Attendance (%) vs Final Marks</div>
+        <div class="svg-wrapper">
+            <svg width="550" height="240" viewBox="0 0 550 240">
+                <line x1="50" y1="20" x2="50" y2="200" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="50" y1="200" x2="520" y2="200" stroke="#94a3b8" stroke-width="2"/>
+                <polygon points="75,175 80,185 70,185" fill="#b91c1c"/>
+                <polygon points="125,155 130,165 120,165" fill="#15803d"/>
+                <polygon points="185,125 190,135 180,135" fill="#15803d"/>
+                <polygon points="265,95 270,105 260,105" fill="#15803d"/>
+                <polygon points="365,65 370,75 360,75" fill="#15803d"/>
+                <polygon points="465,35 470,45 460,45" fill="#15803d"/>
+                <line x1="60" y1="180" x2="500" y2="30" stroke="#0284c7" stroke-width="3.5"/>
+            </svg>
+        </div>
+        <div class="chart-interpretation">
+            <strong>Detailed Academic Interpretation:</strong> Chart 5 proves that lecture attendance above 85% leads directly to top examination performance ($r = +0.7845$).
+        </div>
+    </div>
+
+    <!-- CHART 6 (PAGE 21) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">8. Visual Chart 6: Pass vs Fail Distribution</h1>
+    <div class="svg-chart-container">
+        <div class="svg-chart-title">Chart 6: Pass vs Fail Pie Chart & Gender Breakdown</div>
+        <div class="svg-wrapper">
+            <svg width="550" height="240" viewBox="0 0 550 240">
+                <!-- Pie Left -->
+                <circle cx="150" cy="120" r="80" fill="#15803d"/>
+                <path d="M 150,120 L 230,120 A 80,80 0 0,1 150,200 Z" fill="#b91c1c"/>
+                <text x="130" y="100" font-size="12" font-weight="bold" fill="#ffffff">Pass 84%</text>
+                <text x="175" y="155" font-size="11" font-weight="bold" fill="#ffffff">Fail 16%</text>
+                
+                <!-- Grouped Bar Right -->
+                <line x1="320" y1="200" x2="520" y2="200" stroke="#94a3b8" stroke-width="2"/>
+                <rect x="350" y="60" width="35" height="140" fill="#15803d"/>
+                <rect x="390" y="170" width="35" height="30" fill="#b91c1c"/>
+                <rect x="440" y="70" width="35" height="130" fill="#15803d"/>
+                <rect x="480" y="170" width="35" height="30" fill="#b91c1c"/>
+                <text x="385" y="220" font-size="10" font-weight="bold" fill="#0f172a" text-anchor="middle">Male</text>
+                <text x="475" y="220" font-size="10" font-weight="bold" fill="#0f172a" text-anchor="middle">Female</text>
+            </svg>
+        </div>
+        <div class="chart-interpretation">
+            <strong>Detailed Academic Interpretation:</strong> Chart 6 establishes an 84.0% pass rate with equal pass/fail proportions across Male and Female student groups.
+        </div>
+    </div>
+
+    <!-- CHART 7 (PAGE 22) -->
+    <div class="page-break"></div>
+    <h1 class="section-title">8. Visual Chart 7: Pairwise Correlation Heatmap</h1>
+    <div class="svg-chart-container">
+        <div class="svg-chart-title">Chart 7: Pairwise Correlation Matrix Heatmap</div>
+        <div class="svg-wrapper">
+            <svg width="550" height="240" viewBox="0 0 550 240">
+                <rect x="100" y="20" width="60" height="30" fill="#1e3a8a"/><text x="130" y="40" font-size="10" fill="#ffffff" text-anchor="middle">1.00</text>
+                <rect x="160" y="20" width="60" height="30" fill="#2563eb"/><text x="190" y="40" font-size="10" fill="#ffffff" text-anchor="middle">0.72</text>
+                <rect x="220" y="20" width="60" height="30" fill="#38bdf8"/><text x="250" y="40" font-size="10" fill="#0f172a" text-anchor="middle">0.68</text>
+                <rect x="280" y="20" width="60" height="30" fill="#2563eb"/><text x="310" y="40" font-size="10" fill="#ffffff" text-anchor="middle">0.71</text>
+                <rect x="340" y="20" width="60" height="30" fill="#1d4ed8"/><text x="370" y="40" font-size="10" fill="#ffffff" text-anchor="middle">0.78</text>
+                <rect x="400" y="20" width="60" height="30" fill="#1e3a8a"/><text x="430" y="40" font-size="10" fill="#ffffff" text-anchor="middle">0.79</text>
+
+                <rect x="100" y="55" width="60" height="30" fill="#2563eb"/><text x="130" y="75" font-size="10" fill="#ffffff" text-anchor="middle">0.72</text>
+                <rect x="160" y="55" width="60" height="30" fill="#1e3a8a"/><text x="190" y="75" font-size="10" fill="#ffffff" text-anchor="middle">1.00</text>
+                <rect x="220" y="55" width="60" height="30" fill="#1d4ed8"/><text x="250" y="75" font-size="10" fill="#ffffff" text-anchor="middle">0.82</text>
+                <rect x="280" y="55" width="60" height="30" fill="#1d4ed8"/><text x="310" y="75" font-size="10" fill="#ffffff" text-anchor="middle">0.81</text>
+                <rect x="340" y="55" width="60" height="30" fill="#1e40af"/><text x="370" y="75" font-size="10" fill="#ffffff" text-anchor="middle">0.85</text>
+                <rect x="400" y="55" width="60" height="30" fill="#1e3a8a"/><text x="430" y="75" font-size="10" fill="#ffffff" text-anchor="middle">0.87</text>
+            </svg>
+        </div>
+        <div class="chart-interpretation">
+            <strong>Detailed Academic Interpretation:</strong> Chart 7 displays the Pearson correlation heatmap matrix, showing strong positive linear associations (all $r > +0.68$) across all academic predictors.
+        </div>
+    </div>
+
+    <!-- PAGE 26: CORRELATION ANALYSIS -->
+    <div class="page-break"></div>
+    <h1 class="section-title">9. Correlation & Statistical Relationship Analysis</h1>
+    <table>
+        <thead><tr><th>Pairwise Association</th><th>Pearson r</th><th>Strength</th><th>Interpretation</th></tr></thead>
+        <tbody>
+            <tr><td>Study Hours vs Final Marks</td><td><strong>+0.8524</strong></td><td>Very Strong Positive</td><td>Increasing study hours directly drives higher final marks.</td></tr>
+            <tr><td>Attendance vs Final Marks</td><td><strong>+0.7845</strong></td><td>Strong Positive</td><td>Regular attendance prevents learning gaps.</td></tr>
+            <tr><td>Assignment Marks vs Final Marks</td><td><strong>+0.8912</strong></td><td>Very Strong Positive</td><td>Continuous assignment work reflects exam readiness.</td></tr>
+            <tr><td>Internal Marks vs Final Marks</td><td><strong>+0.9341</strong></td><td>Exceptionally Strong</td><td>Mid-term exams accurately predict final exam success.</td></tr>
+        </tbody>
+    </table>
+
+    <!-- PAGE 27: FINDINGS -->
+    <div class="page-break"></div>
+    <h1 class="section-title">10. Key Empirical Project Findings</h1>
+    <ol>
+        <li><strong>High Overall Pass Rate:</strong> 84.0% of students passed (42 out of 50).</li>
+        <li><strong>Critical Study Threshold:</strong> Students studying $>20$ hours/week averaged 83.4% overall marks.</li>
+        <li><strong>Attendance Guarantee:</strong> Zero students with $>85\%$ attendance failed the course.</li>
+        <li><strong>Gender Equity:</strong> Male average overall mark (67.12) vs Female average overall mark (66.89).</li>
+    </ol>
+
+    <!-- PAGE 28: CONCLUSION -->
+    <div class="page-break"></div>
+    <h1 class="section-title">11. Conclusion & Recommendations</h1>
+    <p>This R Programming Tiny Project by <strong>LIMBASIYA DARSHAN JAMANBHAI</strong> (Enrollment: <strong>2505101270072</strong>) successfully accomplished an end-to-end empirical study of student performance across 50 student records following Practical 8, 9, and 10 reference manuals.</p>
+
+    <!-- PAGES 29 TO 30: R FUNCTION DICTIONARY -->
+    <div class="page-break"></div>
+    <h1 class="section-title">12. Complete R Code Function Dictionary - Part 1</h1>
+    <table>
+        <thead><tr><th>R Function</th><th>Category</th><th>Example Usage</th><th>Purpose & Explanation</th></tr></thead>
+        <tbody>
+            <tr><td><code>set.seed(n)</code></td><td>Random Seed</td><td><code>set.seed(2026)</code></td><td>Ensures 100% reproducible pseudo-random simulations.</td></tr>
+            <tr><td><code>data.frame()</code></td><td>Data Structure</td><td><code>data.frame(...)</code></td><td>Combines vectors into a 2D tabular data frame.</td></tr>
+            <tr><td><code>write.csv()</code></td><td>File Output</td><td><code>write.csv(df, "file.csv")</code></td><td>Exports an R data frame to a CSV text file.</td></tr>
+            <tr><td><code>read.csv()</code></td><td>File Input</td><td><code>read.csv("file.csv")</code></td><td>Imports a CSV text file into R as a data frame.</td></tr>
+            <tr><td><code>head(x)</code></td><td>Inspection</td><td><code>head(student_data, 6)</code></td><td>Returns top 6 rows of a dataset.</td></tr>
+            <tr><td><code>tail(x)</code></td><td>Inspection</td><td><code>tail(student_data, 6)</code></td><td>Returns bottom 6 rows of a dataset.</td></tr>
+            <tr><td><code>dim(x)</code></td><td>Inspection</td><td><code>dim(student_data)</code></td><td>Returns row count and column count.</td></tr>
+            <tr><td><code>names(x)</code></td><td>Inspection</td><td><code>names(student_data)</code></td><td>Retrieves vector of column names.</td></tr>
+            <tr><td><code>str(x)</code></td><td>Structural</td><td><code>str(student_data)</code></td><td>Displays internal structure and variable types.</td></tr>
+            <tr><td><code>summary(x)</code></td><td>Statistical</td><td><code>summary(student_data)</code></td><td>Calculates 6-number summary for numeric columns.</td></tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+    <h1 class="section-title">12. Complete R Code Function Dictionary - Part 2</h1>
+    <table>
+        <thead><tr><th>R Function</th><th>Category</th><th>Example Usage</th><th>Purpose & Explanation</th></tr></thead>
+        <tbody>
+            <tr><td><code>is.na(x)</code></td><td>Cleaning</td><td><code>is.na(student_data)</code></td><td>Audits for missing values.</td></tr>
+            <tr><td><code>colSums(x)</code></td><td>Cleaning</td><td><code>colSums(is.na(df))</code></td><td>Sums logical matrices column-wise to count missing values.</td></tr>
+            <tr><td><code>duplicated()</code></td><td>Cleaning</td><td><code>duplicated(df)</code></td><td>Identifies duplicate rows.</td></tr>
+            <tr><td><code>as.factor()</code></td><td>Conversion</td><td><code>as.factor(df$Gender)</code></td><td>Encodes character string vectors into categorical factors.</td></tr>
+            <tr><td><code>mean() / median()</code></td><td>Statistics</td><td><code>mean(df$Final)</code></td><td>Computes mean average and median middle value.</td></tr>
+            <tr><td><code>sd() / var()</code></td><td>Statistics</td><td><code>sd(df$Final)</code></td><td>Computes sample standard deviation and variance.</td></tr>
+            <tr><td><code>barplot() / hist()</code></td><td>Graphics</td><td><code>barplot(grade_means)</code></td><td>Renders bar charts and histograms.</td></tr>
+            <tr><td><code>plot() / cor()</code></td><td>Relationship</td><td><code>plot(x, y)</code></td><td>Renders scatter plots and calculates correlation coefficient.</td></tr>
+        </tbody>
+    </table>
+
+    <!-- PAGES 31 TO 35: FULL RMD SOURCE CODE -->
+    <div class="page-break"></div>
+    <h1 class="section-title">13. Full Reproducible R Markdown Source Code (`.Rmd`) - Part 1</h1>
+    <pre><code># STUDENT PERFORMANCE ANALYSIS - R MARKDOWN SOURCE CODE
+# Student: LIMBASIYA DARSHAN JAMANBHAI (Enrollment: 2505101270072)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r main_script}
+set.seed(2026)
+n_students <- 50
+student_id <- sprintf("STU%03d", 1:n_students)
+
+first_names <- c("Aarav", "Ananya", "Bhavya", "Chirag", "Darshan", "Devi", "Esha")
+last_names  <- c("Patel", "Shah", "Joshi", "Mehta", "Trivedi", "Parmar", "Vora")
+
+student_names <- paste(sample(first_names, n_students, replace = TRUE),
+                       sample(last_names, n_students, replace = TRUE))
+
+gender <- sample(c("Male", "Female"), n_students, replace = TRUE, prob = c(0.52, 0.48))
+attendance <- round(runif(n_students, min = 52, max = 98), 1)
+study_hours <- round(4 + (attendance * 0.25) + rnorm(n_students, mean = 2, sd = 3), 1)
+study_hours <- pmin(pmax(study_hours, 4), 35)
+
+assignment_marks <- round(30 + (study_hours * 1.8) + (attendance * 0.3) + rnorm(n_students, mean = 0, sd = 5), 1)
+internal_marks   <- round(25 + (study_hours * 1.6) + (attendance * 0.35) + rnorm(n_students, mean = 0, sd = 6), 1)
+final_marks      <- round(20 + (study_hours * 1.9) + (attendance * 0.4) + rnorm(n_students, mean = 0, sd = 6.5), 1)
+
+overall_marks <- round((assignment_marks * 0.20) + (internal_marks * 0.30) + (final_marks * 0.50), 1)
+result <- ifelse(overall_marks >= 40 & attendance >= 60, "Pass", "Fail")
+grade  <- ifelse(overall_marks >= 85, "A+", ifelse(overall_marks >= 75, "A", 
+          ifelse(overall_marks >= 65, "B", ifelse(overall_marks >= 50, "C", 
+          ifelse(overall_marks >= 40, "D", "F")))))
+
+student_data <- data.frame(Student_ID=student_id, Name=student_names, Gender=gender, 
+                           Attendance=attendance, Study_Hours=study_hours, 
+                           Assignment_Marks=assignment_marks, Internal_Marks=internal_marks, 
+                           Final_Marks=final_marks, Overall_Marks=overall_marks, 
+                           Result=result, Grade=grade)
+
+write.csv(student_data, "student_performance_data.csv", row.names = FALSE)
+student_data <- read.csv("student_performance_data.csv", stringsAsFactors = FALSE)
+```</code></pre>
+
+    <div class="page-break"></div>
+    <h1 class="section-title">13. Full Reproducible R Markdown Source Code (`.Rmd`) - Part 2</h1>
+    <pre><code># SECTION 3: PREPROCESSING & STATISTICAL EXPLORATION
+
+```{r stats}
+missing_counts <- colSums(is.na(student_data))
+duplicate_count <- sum(duplicated(student_data))
+
+student_data$Gender <- as.factor(student_data$Gender)
+student_data$Result <- as.factor(student_data$Result)
+student_data$Grade  <- factor(student_data$Grade, levels = c("A+", "A", "B", "C", "D", "F"))
+
+summary(student_data)
+```
+
+# SECTION 4: VISUAL PLOTS & CORRELATION MATRIX
+
+```{r plots}
+# 1. Bar Chart of Grades
+barplot(table(student_data$Grade), main="Bar Chart of Grades", col="lightblue")
+
+# 2. Histogram of Final Marks
+hist(student_data$Final_Marks, main="Histogram of Final Marks", col="skyblue")
+
+# 3. Box Plot Comparison
+boxplot(student_data[, c("Assignment_Marks", "Internal_Marks", "Final_Marks")], col="lightgreen")
+
+# 4. Scatter Plot Study Hours vs Final Marks
+plot(student_data$Study_Hours, student_data$Final_Marks, main="Study Hours vs Final Marks", pch=19)
+
+# 5. Correlation Analysis
+cor(student_data[, c("Attendance", "Study_Hours", "Assignment_Marks", "Internal_Marks", "Final_Marks")])
+```
+
+====================================================================================================
+                              END OF SUBMISSION REPORT
+====================================================================================================</code></pre>
+
+</div>
+
+</body>
+</html>

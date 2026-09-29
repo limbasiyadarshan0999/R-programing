@@ -1,0 +1,179 @@
+---
+title: "project1"
+author: "payal"
+date: "2026-09-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+student_data <- read.csv("C:/Users/Payal P/Desktop/student_data.csv") 
+student_data
+
+```
+
+
+
+```{r}
+head(student_data)
+```
+
+
+```{r}
+summary(student_data)
+```
+
+
+```{r}
+
+str(student_data)
+
+
+```
+
+
+
+```{r}
+
+
+colSums(is.na(student_data))
+
+
+
+```
+
+
+
+
+```{r}
+
+median(student_data$Marks)
+
+var(student_data$Marks)
+sd(student_data$Marks)
+
+
+```
+
+
+
+```{r}
+
+
+gender_count <- table(student_data$Gender)
+
+gender_count
+
+
+```
+
+
+
+```{r}
+
+
+pie(
+  gender_count,
+  main = "Gender Distribution",
+  labels = paste(
+    names(gender_count),
+    gender_count
+  )
+)
+
+
+
+```
+
+```{r}
+result_count <- table(student_data$Result)
+
+result_count
+
+
+```
+
+
+
+```{r}
+pie(
+  result_count,
+  main = "Student Result Distribution",
+  labels = paste(
+    names(result_count),
+    result_count
+  )
+)
+
+
+```
+
+
+```{r}
+barplot(
+  student_data$Marks,
+  names.arg = student_data$Name,
+  main = "Student Marks",
+  xlab = "Students",
+  ylab = "Marks",
+  las = 2
+)
+
+
+```
+
+
+
+```{r}
+barplot(
+  student_data$Attendance,
+  names.arg = student_data$Name,
+  main = "Student Attendance",
+  xlab = "Students",
+  ylab = "Attendance (%)",
+  las = 2
+)
+
+
+```
+
+
+```{r}
+
+cor(
+  student_data$Attendance,
+  student_data$Marks
+)
+
+```
+
+
+
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(
+  student_data$Attendance,
+  student_data$Marks,
+  main = "Attendance vs Marks",
+  xlab = "Attendance (%)",
+  ylab = "Marks",
+  pch = 19
+)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
